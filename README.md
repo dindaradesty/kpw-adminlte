@@ -1,6 +1,6 @@
 Tugas KPW - ADMIN LTE
 
-Nama: Dinda Radesti Listyanto (individu)
+Nama: Dinda Radesti Listyanto (individu) 
 Kelas: XII RPL 2
 
 Cara Login:
