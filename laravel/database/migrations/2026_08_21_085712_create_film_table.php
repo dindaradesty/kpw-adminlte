@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('film', function (Blueprint $table) {
             $table->id();
-            $table->id();
             $table->string('judul', 45);
             $table->text('ringkasan');
             $table->integer('tahun');
