@@ -1,14 +1,7 @@
-Tugas KPW - ADMIN LTE
+Tugas KPW - ADMIN LTE dan Membuat Migration XII RPL 2
 
-Nama: Dinda Radesti Listyanto (individu) 
-Kelas: XII RPL 2
-
-Cara Login:
-- username: admin
-- password: 12345
-
-Assalamu'alaikum Pak Jumadi.
-Maaf bapak, saya izin mengerjakan tugas bapak secara individu (yang seharusnya dikerjakan berkelompok)
-karena minggu lalu saya berhalangan untuk hadir jadi tidak ada kelompok.
-Mohon maaf juga bapak karena keterlambatan saya dalam mengumpulkan tugas.
-Terima kasih sebelumnya bapak.
+Kelompok 6:
+1. Bintang Bima
+2. Dinda Radesti Listyanto
+3. Kartika Puji Lestari
+4. Sabrina Laura Safitri
