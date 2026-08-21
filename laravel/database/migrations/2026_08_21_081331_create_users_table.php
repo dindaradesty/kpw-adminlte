@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('nama', 45);
             $table->string('email', 45);
             $table->string('password', 45);
+            $table->foreignId('role_id')->constrained('role');
+            $table->foreignId('profile_id')->constrained('profile');
             $table->timestamps();
         });
     }
