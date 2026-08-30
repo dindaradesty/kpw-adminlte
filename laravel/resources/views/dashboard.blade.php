@@ -45,10 +45,9 @@
         align-items: center;
         justify-content: center;
         font-size: 25px;
-        font-weight: bold;
     }
 
-    .book-card {
+    .custom-card {
         border: none;
         border-radius: 20px;
         background: #ffffff;
@@ -107,12 +106,31 @@
         color: #ffffff;
     }
 
-    .dashboard-title {
-        color: #292d25;
+    .book-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #e5e0d6;
+    }
+
+    .book-item:last-child {
+        border-bottom: none;
+    }
+
+    .book-cover {
+        width: 48px;
+        height: 58px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
     }
 </style>
 
-<!-- WELCOME -->
+
+<!-- =========================
+     WELCOME
+========================= -->
+
 <div class="welcome-box">
 
     <div class="row align-items-center">
@@ -120,7 +138,7 @@
         <div class="col-md-8">
 
             <h1>
-                Selamat Datang, Admin! 
+                Selamat Datang, {{ session('user_name', 'Admin') }}!
             </h1>
 
             <p class="mb-0">
@@ -142,10 +160,14 @@
 </div>
 
 
-<!-- STATISTIK -->
+<!-- =========================
+     STATISTIK
+========================= -->
+
 <div class="row">
 
-    <!-- BUKU -->
+    <!-- TOTAL BUKU -->
+
     <div class="col-lg-3 col-md-6 mb-4">
 
         <div class="card stat-card shadow-sm">
@@ -161,11 +183,11 @@
                         </p>
 
                         <h2 class="fw-bold mb-0">
-                            245
+                            {{ count($buku) }}
                         </h2>
 
                         <small class="text-success">
-                            <i class="bi bi-arrow-up"></i>
+                            <i class="bi bi-book"></i>
                             Koleksi perpustakaan
                         </small>
 
@@ -186,7 +208,8 @@
     </div>
 
 
-    <!-- ANGGOTA -->
+    <!-- TOTAL ANGGOTA -->
+
     <div class="col-lg-3 col-md-6 mb-4">
 
         <div class="card stat-card shadow-sm">
@@ -202,12 +225,12 @@
                         </p>
 
                         <h2 class="fw-bold mb-0">
-                            128
+                            {{ count($anggota) }}
                         </h2>
 
                         <small class="text-success">
-                            <i class="bi bi-person-plus"></i>
-                            12 anggota baru
+                            <i class="bi bi-people"></i>
+                            Anggota perpustakaan
                         </small>
 
                     </div>
@@ -227,7 +250,8 @@
     </div>
 
 
-    <!-- PEMINJAMAN -->
+    <!-- SEDANG DIPINJAM -->
+
     <div class="col-lg-3 col-md-6 mb-4">
 
         <div class="card stat-card shadow-sm">
@@ -243,12 +267,12 @@
                         </p>
 
                         <h2 class="fw-bold mb-0">
-                            37
+                            {{ collect($peminjaman)->where('status', 'Dipinjam')->count() }}
                         </h2>
 
                         <small class="text-warning">
-                            <i class="bi bi-journal-bookmark"></i>
-                            Buku keluar
+                            <i class="bi bi-journal-arrow-up"></i>
+                            Buku sedang keluar
                         </small>
 
                     </div>
@@ -268,7 +292,8 @@
     </div>
 
 
-    <!-- TERLAMBAT -->
+    <!-- PENGEMBALIAN -->
+
     <div class="col-lg-3 col-md-6 mb-4">
 
         <div class="card stat-card shadow-sm">
@@ -280,23 +305,23 @@
                     <div>
 
                         <p class="text-muted mb-1">
-                            Terlambat
+                            Pengembalian
                         </p>
 
                         <h2 class="fw-bold mb-0">
-                            8
+                            {{ count($pengembalian) }}
                         </h2>
 
-                        <small class="text-danger">
-                            <i class="bi bi-exclamation-circle"></i>
-                            Perlu perhatian
+                        <small class="text-success">
+                            <i class="bi bi-check-circle"></i>
+                            Buku dikembalikan
                         </small>
 
                     </div>
 
                     <div class="stat-icon bg-soft text-sage">
 
-                        <i class="bi bi-clock-history"></i>
+                        <i class="bi bi-arrow-return-left"></i>
 
                     </div>
 
@@ -311,14 +336,18 @@
 </div>
 
 
-<!-- BAGIAN BAWAH -->
+<!-- =========================
+     BAGIAN BAWAH
+========================= -->
+
 <div class="row">
 
 
-    <!-- BUKU TERPOPULER -->
+    <!-- DAFTAR BUKU -->
+
     <div class="col-lg-7 mb-4">
 
-        <div class="card book-card shadow-sm">
+        <div class="card custom-card shadow-sm">
 
             <div class="card-header bg-white border-0 pt-4 px-4">
 
@@ -327,12 +356,15 @@
                     <div>
 
                         <h4 class="fw-bold mb-1">
-                            <i class="bi bi-stars text-warning me-2"></i>
-                            Buku Terpopuler
+
+                            <i class="bi bi-book-half text-warning me-2"></i>
+
+                            Koleksi Buku
+
                         </h4>
 
                         <small class="text-muted">
-                            Buku yang paling sering dipinjam
+                            Daftar buku yang tersedia di PerpusKita
                         </small>
 
                     </div>
@@ -351,100 +383,58 @@
 
             <div class="card-body px-4">
 
-                <!-- BUKU 1 -->
-                <div class="d-flex align-items-center mb-4">
+                @forelse(collect($buku)->take(5) as $item)
 
-                    <div class="bg-sage text-sage rounded-3
-                                d-flex align-items-center justify-content-center me-3"
-                         style="width: 48px; height: 55px;">
+                    <div class="book-item d-flex align-items-center">
 
-                        <i class="bi bi-book fs-4"></i>
+                        <div class="book-cover bg-sage text-sage">
 
-                    </div>
+                            <i class="bi bi-book fs-4"></i>
 
-                    <div class="flex-grow-1">
+                        </div>
 
-                        <strong>
-                            Dasar-Dasar Laravel
-                        </strong>
+                        <div class="flex-grow-1">
 
-                        <br>
+                            <strong>
+                                {{ $item['judul'] }}
+                            </strong>
 
-                        <small class="text-muted">
-                            Budi Santoso
-                        </small>
+                            <br>
 
-                    </div>
+                            <small class="text-muted">
 
-                    <span class="badge text-bg-primary">
-                        32x dipinjam
-                    </span>
+                                {{ $item['penulis'] }}
 
-                </div>
+                                @if(isset($item['tahun_terbit']))
+                                    · {{ $item['tahun_terbit'] }}
+                                @endif
 
+                            </small>
 
-                <!-- BUKU 2 -->
-                <div class="d-flex align-items-center mb-4">
+                        </div>
 
-                    <div class="bg-cream text-sage rounded-3
-                                d-flex align-items-center justify-content-center me-3"
-                         style="width: 48px; height: 55px;">
+                        <span class="badge rounded-pill"
+                              style="background:#d9e2cf;color:#435334;">
 
-                        <i class="bi bi-book fs-4"></i>
+                            Stok: {{ $item['stok'] }}
+
+                        </span>
 
                     </div>
 
-                    <div class="flex-grow-1">
+                @empty
 
-                        <strong>
-                            Pemrograman Web Modern
-                        </strong>
+                    <div class="text-center text-muted py-4">
 
-                        <br>
+                        <i class="bi bi-book fs-2"></i>
 
-                        <small class="text-muted">
-                            Andi Pratama
-                        </small>
+                        <p class="mt-2 mb-0">
+                            Belum ada data buku.
+                        </p>
 
                     </div>
 
-                    <span class="badge text-bg-success">
-                        27x dipinjam
-                    </span>
-
-                </div>
-
-
-                <!-- BUKU 3 -->
-                <div class="d-flex align-items-center">
-
-                    <div class="bg-brown text-sage rounded-3
-                                d-flex align-items-center justify-content-center me-3"
-                         style="width: 48px; height: 55px;">
-
-                        <i class="bi bi-book fs-4"></i>
-
-                    </div>
-
-                    <div class="flex-grow-1">
-
-                        <strong>
-                            Belajar Database MySQL
-                        </strong>
-
-                        <br>
-
-                        <small class="text-muted">
-                            Siti Rahma
-                        </small>
-
-                    </div>
-
-                    <span class="badge text-bg-warning">
-                        21x dipinjam
-                    </span>
-
-                </div>
+                @endforelse
 
             </div>
 
@@ -453,10 +443,11 @@
     </div>
 
 
-    <!-- AKTIVITAS -->
+    <!-- AKTIVITAS TERBARU -->
+
     <div class="col-lg-5 mb-4">
 
-        <div class="card book-card shadow-sm">
+        <div class="card custom-card shadow-sm">
 
             <div class="card-header bg-white border-0 pt-4 px-4">
 
@@ -469,7 +460,7 @@
                 </h4>
 
                 <small class="text-muted">
-                    Aktivitas perpustakaan hari ini
+                    Aktivitas perpustakaan
                 </small>
 
             </div>
@@ -477,104 +468,51 @@
 
             <div class="card-body px-4">
 
-                <div class="activity-item d-flex">
+                @forelse(collect($peminjaman)->take(4) as $item)
 
-                    <div class="activity-icon bg-primary bg-opacity-10 text-primary">
+                    <div class="activity-item d-flex">
 
-                        <i class="bi bi-book"></i>
+                        <div class="activity-icon bg-primary bg-opacity-10 text-primary">
 
-                    </div>
+                            <i class="bi bi-journal-arrow-up"></i>
 
-                    <div>
+                        </div>
 
-                        <strong>
-                            Andi meminjam buku
-                        </strong>
+                        <div>
 
-                        <br>
+                            <strong>
+                                {{ $item['anggota'] ?? 'Anggota' }} meminjam buku
+                            </strong>
 
-                        <small class="text-muted">
-                            Dasar-Dasar Laravel · 10 menit lalu
-                        </small>
+                            <br>
 
-                    </div>
+                            <small class="text-muted">
 
-                </div>
+                                {{ $item['buku'] ?? 'Buku' }}
 
+                                ·
 
-                <div class="activity-item d-flex">
+                                {{ $item['tanggal_pinjam'] }}
 
-                    <div class="activity-icon bg-success bg-opacity-10 text-success">
+                            </small>
 
-                        <i class="bi bi-check-circle"></i>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Siti mengembalikan buku
-                        </strong>
-
-                        <br>
-
-                        <small class="text-muted">
-                            Database MySQL · 30 menit lalu
-                        </small>
+                        </div>
 
                     </div>
 
-                </div>
+                @empty
 
+                    <div class="text-center text-muted py-4">
 
-                <div class="activity-item d-flex">
+                        <i class="bi bi-clock-history fs-2"></i>
 
-                    <div class="activity-icon bg-warning bg-opacity-10 text-warning">
-
-                        <i class="bi bi-person-plus"></i>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Anggota baru terdaftar
-                        </strong>
-
-                        <br>
-
-                        <small class="text-muted">
-                            Budi Santoso · 1 jam lalu
-                        </small>
+                        <p class="mt-2 mb-0">
+                            Belum ada aktivitas.
+                        </p>
 
                     </div>
 
-                </div>
-
-
-                <div class="activity-item d-flex">
-
-                    <div class="activity-icon bg-danger bg-opacity-10 text-danger">
-
-                        <i class="bi bi-exclamation-circle"></i>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Buku terlambat dikembalikan
-                        </strong>
-
-                        <br>
-
-                        <small class="text-muted">
-                            HTML & CSS Dasar · 2 jam lalu
-                        </small>
-
-                    </div>
-
-                </div>
+                @endforelse
 
             </div>
 

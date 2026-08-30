@@ -11,11 +11,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/login', function () {
-
     return view('login');
-
 });
-
 
 Route::post('/login', function (Request $request) {
 
@@ -34,7 +31,6 @@ Route::post('/login', function (Request $request) {
 
     return redirect('/login')
         ->with('error', 'Username atau password salah.');
-
 });
 
 
@@ -65,55 +61,227 @@ Route::get('/dashboard', function () {
         return redirect('/login');
     }
 
-    return view('dashboard');
+    // =========================
+    // DATA BUKU
+    // =========================
 
-});
+    $buku = session('buku', [
+        [
+            'id' => 1,
+            'judul' => 'Dasar-Dasar Laravel',
+            'penulis' => 'Budi Santoso',
+            'tahun_terbit' => 2024,
+            'stok' => 5,
+            'kategori_id' => 1,
+        ],
+        [
+            'id' => 2,
+            'judul' => 'Pemrograman Web Modern',
+            'penulis' => 'Andi Pratama',
+            'tahun_terbit' => 2023,
+            'stok' => 3,
+            'kategori_id' => 2,
+        ],
+        [
+            'id' => 3,
+            'judul' => 'Belajar Database MySQL',
+            'penulis' => 'Siti Rahma',
+            'tahun_terbit' => 2024,
+            'stok' => 4,
+            'kategori_id' => 3,
+        ],
+        [
+            'id' => 4,
+            'judul' => 'HTML & CSS Dasar',
+            'penulis' => 'Rina Amelia',
+            'tahun_terbit' => 2022,
+            'stok' => 6,
+            'kategori_id' => 4,
+        ],
+    ]);
 
+
+    // =========================
+    // DATA ANGGOTA
+    // =========================
+
+    $anggota = session('anggota', [
+        [
+            'id' => 1,
+            'nama' => 'Andi Pratama',
+            'nis' => '12345',
+            'alamat' => 'Jakarta',
+            'no_hp' => '081234567890',
+        ],
+        [
+            'id' => 2,
+            'nama' => 'Siti Rahma',
+            'nis' => '12346',
+            'alamat' => 'Bandung',
+            'no_hp' => '081234567891',
+        ],
+        [
+            'id' => 3,
+            'nama' => 'Budi Santoso',
+            'nis' => '12347',
+            'alamat' => 'Depok',
+            'no_hp' => '081234567892',
+        ],
+        [
+            'id' => 4,
+            'nama' => 'Rina Amelia',
+            'nis' => '12348',
+            'alamat' => 'Bekasi',
+            'no_hp' => '081234567893',
+        ],
+    ]);
+
+
+    // =========================
+    // DATA PEMINJAMAN
+    // =========================
+
+    $peminjaman = session('peminjaman', [
+        [
+            'id' => 1,
+            'anggota_id' => 1,
+            'buku_id' => 1,
+            'tanggal_pinjam' => '2026-08-18',
+            'tanggal_jatuh_tempo' => '2026-08-25',
+            'status' => 'Dipinjam',
+        ],
+        [
+            'id' => 2,
+            'anggota_id' => 2,
+            'buku_id' => 2,
+            'tanggal_pinjam' => '2026-08-17',
+            'tanggal_jatuh_tempo' => '2026-08-24',
+            'status' => 'Dipinjam',
+        ],
+    ]);
+
+
+    // =========================
+    // DATA PENGEMBALIAN
+    // =========================
+
+    $pengembalian = session('pengembalian', []);
+
+
+    // =========================
+    // HUBUNGKAN PEMINJAMAN
+    // DENGAN ANGGOTA & BUKU
+    // =========================
+
+    foreach ($peminjaman as &$item) {
+
+        $item['anggota'] = 'Tidak diketahui';
+        $item['buku'] = 'Tidak diketahui';
+
+        foreach ($anggota as $a) {
+
+            if ($a['id'] == $item['anggota_id']) {
+
+                $item['anggota'] = $a['nama'];
+
+                break;
+            }
+        }
+
+        foreach ($buku as $b) {
+
+            if ($b['id'] == $item['buku_id']) {
+
+                $item['buku'] = $b['judul'];
+
+                break;
+            }
+        }
+    }
+
+    unset($item);
+
+
+    // =========================
+    // KIRIM KE DASHBOARD
+    // =========================
+
+    return view('dashboard', compact(
+        'buku',
+        'anggota',
+        'peminjaman',
+        'pengembalian'
+    ));
+
+})->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
-| DATA BUKU
+| BUKU
 |--------------------------------------------------------------------------
 */
 
-Route::get('/buku', function (Request $request) {
+Route::get('/buku', function () {
 
     if (!session('logged_in')) {
         return redirect('/login');
     }
 
-    $buku = session('buku', [
+    $kategori = session('kategori', [
         [
-            'judul' => 'Dasar-Dasar Laravel',
-            'kode' => 'BK-001',
-            'penulis' => 'Budi Santoso',
-            'kategori' => 'Teknologi',
-            'status' => 'Tersedia'
+            'id' => 1,
+            'nama' => 'Teknologi'
         ],
         [
-            'judul' => 'Pemrograman Web Modern',
-            'kode' => 'BK-002',
-            'penulis' => 'Andi Pratama',
-            'kategori' => 'Pemrograman',
-            'status' => 'Dipinjam'
+            'id' => 2,
+            'nama' => 'Pemrograman'
         ],
         [
-            'judul' => 'Belajar Database MySQL',
-            'kode' => 'BK-003',
-            'penulis' => 'Siti Rahma',
-            'kategori' => 'Database',
-            'status' => 'Tersedia'
+            'id' => 3,
+            'nama' => 'Database'
         ],
         [
-            'judul' => 'HTML & CSS Dasar',
-            'kode' => 'BK-004',
-            'penulis' => 'Rina Amelia',
-            'kategori' => 'Web Design',
-            'status' => 'Tersedia'
+            'id' => 4,
+            'nama' => 'Web Design'
         ],
     ]);
 
-    return view('buku', compact('buku'));
+    $buku = session('buku', [
+        [
+            'id' => 1,
+            'judul' => 'Dasar-Dasar Laravel',
+            'penulis' => 'Budi Santoso',
+            'tahun_terbit' => 2024,
+            'stok' => 5,
+            'kategori_id' => 1,
+        ],
+        [
+            'id' => 2,
+            'judul' => 'Pemrograman Web Modern',
+            'penulis' => 'Andi Pratama',
+            'tahun_terbit' => 2023,
+            'stok' => 3,
+            'kategori_id' => 2,
+        ],
+        [
+            'id' => 3,
+            'judul' => 'Belajar Database MySQL',
+            'penulis' => 'Siti Rahma',
+            'tahun_terbit' => 2024,
+            'stok' => 4,
+            'kategori_id' => 3,
+        ],
+        [
+            'id' => 4,
+            'judul' => 'HTML & CSS Dasar',
+            'penulis' => 'Rina Amelia',
+            'tahun_terbit' => 2022,
+            'stok' => 6,
+            'kategori_id' => 4,
+        ],
+    ]);
+
+    return view('buku', compact('buku', 'kategori'));
 
 })->name('buku.index');
 
@@ -126,19 +294,25 @@ Route::post('/buku', function (Request $request) {
 
     $request->validate([
         'judul' => 'required',
-        'kode' => 'required',
         'penulis' => 'required',
-        'kategori' => 'required',
+        'tahun_terbit' => 'required|integer',
+        'stok' => 'required|integer|min:0',
+        'kategori_id' => 'required',
     ]);
 
     $buku = session('buku', []);
 
+    $nextId = count($buku) > 0
+        ? max(array_column($buku, 'id')) + 1
+        : 1;
+
     $buku[] = [
+        'id' => $nextId,
         'judul' => $request->judul,
-        'kode' => $request->kode,
         'penulis' => $request->penulis,
-        'kategori' => $request->kategori,
-        'status' => 'Tersedia',
+        'tahun_terbit' => $request->tahun_terbit,
+        'stok' => $request->stok,
+        'kategori_id' => $request->kategori_id,
     ];
 
     session(['buku' => $buku]);
@@ -146,6 +320,70 @@ Route::post('/buku', function (Request $request) {
     return redirect('/buku');
 
 })->name('buku.store');
+
+
+/*
+|--------------------------------------------------------------------------
+| KATEGORI
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/kategori', function () {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $kategori = session('kategori', [
+        [
+            'id' => 1,
+            'nama' => 'Teknologi'
+        ],
+        [
+            'id' => 2,
+            'nama' => 'Pemrograman'
+        ],
+        [
+            'id' => 3,
+            'nama' => 'Database'
+        ],
+        [
+            'id' => 4,
+            'nama' => 'Web Design'
+        ],
+    ]);
+
+    return view('kategori', compact('kategori'));
+
+})->name('kategori.index');
+
+
+Route::post('/kategori', function (Request $request) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $request->validate([
+        'nama' => 'required'
+    ]);
+
+    $kategori = session('kategori', []);
+
+    $nextId = count($kategori) > 0
+        ? max(array_column($kategori, 'id')) + 1
+        : 1;
+
+    $kategori[] = [
+        'id' => $nextId,
+        'nama' => $request->nama,
+    ];
+
+    session(['kategori' => $kategori]);
+
+    return redirect('/kategori');
+
+})->name('kategori.store');
 
 
 /*
@@ -162,32 +400,32 @@ Route::get('/anggota', function () {
 
     $anggota = session('anggota', [
         [
+            'id' => 1,
             'nama' => 'Andi Pratama',
-            'email' => 'andi@email.com',
-            'id_anggota' => 'AGT-001',
-            'kelas' => 'XI RPL 1',
-            'status' => 'Aktif'
+            'nis' => '12345',
+            'alamat' => 'Jakarta',
+            'no_hp' => '081234567890',
         ],
         [
+            'id' => 2,
             'nama' => 'Siti Rahma',
-            'email' => 'siti@email.com',
-            'id_anggota' => 'AGT-002',
-            'kelas' => 'XI RPL 2',
-            'status' => 'Aktif'
+            'nis' => '12346',
+            'alamat' => 'Bandung',
+            'no_hp' => '081234567891',
         ],
         [
+            'id' => 3,
             'nama' => 'Budi Santoso',
-            'email' => 'budi@email.com',
-            'id_anggota' => 'AGT-003',
-            'kelas' => 'XII RPL 1',
-            'status' => 'Tidak Aktif'
+            'nis' => '12347',
+            'alamat' => 'Depok',
+            'no_hp' => '081234567892',
         ],
         [
+            'id' => 4,
             'nama' => 'Rina Amelia',
-            'email' => 'rina@email.com',
-            'id_anggota' => 'AGT-004',
-            'kelas' => 'XI RPL 2',
-            'status' => 'Aktif'
+            'nis' => '12348',
+            'alamat' => 'Bekasi',
+            'no_hp' => '081234567893',
         ],
     ]);
 
@@ -204,19 +442,23 @@ Route::post('/anggota', function (Request $request) {
 
     $request->validate([
         'nama' => 'required',
-        'id_anggota' => 'required',
-        'email' => 'required|email',
-        'kelas' => 'required',
+        'nis' => 'required',
+        'alamat' => 'required',
+        'no_hp' => 'required',
     ]);
 
     $anggota = session('anggota', []);
 
+    $nextId = count($anggota) > 0
+        ? max(array_column($anggota, 'id')) + 1
+        : 1;
+
     $anggota[] = [
+        'id' => $nextId,
         'nama' => $request->nama,
-        'email' => $request->email,
-        'id_anggota' => $request->id_anggota,
-        'kelas' => $request->kelas,
-        'status' => 'Aktif',
+        'nis' => $request->nis,
+        'alamat' => $request->alamat,
+        'no_hp' => $request->no_hp,
     ];
 
     session(['anggota' => $anggota]);
@@ -238,43 +480,122 @@ Route::get('/peminjaman', function () {
         return redirect('/login');
     }
 
+    // Data anggota
+    $anggota = session('anggota', [
+        [
+            'id' => 1,
+            'nama' => 'Andi Pratama',
+            'nis' => '12345',
+            'alamat' => 'Jakarta',
+            'no_hp' => '081234567890'
+        ],
+        [
+            'id' => 2,
+            'nama' => 'Siti Rahma',
+            'nis' => '12346',
+            'alamat' => 'Bandung',
+            'no_hp' => '081234567891'
+        ],
+        [
+            'id' => 3,
+            'nama' => 'Budi Santoso',
+            'nis' => '12347',
+            'alamat' => 'Depok',
+            'no_hp' => '081234567892'
+        ],
+        [
+            'id' => 4,
+            'nama' => 'Rina Amelia',
+            'nis' => '12348',
+            'alamat' => 'Bekasi',
+            'no_hp' => '081234567893'
+        ],
+    ]);
+
+    // Data buku
+    $buku = session('buku', [
+        [
+            'id' => 1,
+            'judul' => 'Dasar-Dasar Laravel',
+            'penulis' => 'Budi Santoso',
+            'tahun_terbit' => 2024,
+            'stok' => 5,
+            'kategori_id' => 1
+        ],
+        [
+            'id' => 2,
+            'judul' => 'Pemrograman Web Modern',
+            'penulis' => 'Andi Pratama',
+            'tahun_terbit' => 2023,
+            'stok' => 3,
+            'kategori_id' => 2
+        ],
+        [
+            'id' => 3,
+            'judul' => 'Belajar Database MySQL',
+            'penulis' => 'Siti Rahma',
+            'tahun_terbit' => 2022,
+            'stok' => 4,
+            'kategori_id' => 3
+        ],
+        [
+            'id' => 4,
+            'judul' => 'HTML & CSS Dasar',
+            'penulis' => 'Rina Amelia',
+            'tahun_terbit' => 2024,
+            'stok' => 6,
+            'kategori_id' => 2
+        ],
+    ]);
+
+    // Data peminjaman
     $peminjaman = session('peminjaman', [
         [
-            'anggota' => 'Andi Pratama',
-            'id_anggota' => 'AGT-001',
-            'buku' => 'Dasar-Dasar Laravel',
-            'tanggal_pinjam' => '18 Agustus 2026',
-            'jatuh_tempo' => '25 Agustus 2026',
+            'id' => 1,
+            'anggota_id' => 1,
+            'buku_id' => 1,
+            'tanggal_pinjam' => '2026-08-18',
+            'tanggal_jatuh_tempo' => '2026-08-25',
             'status' => 'Dipinjam'
         ],
         [
-            'anggota' => 'Siti Rahma',
-            'id_anggota' => 'AGT-002',
-            'buku' => 'Pemrograman Web Modern',
-            'tanggal_pinjam' => '17 Agustus 2026',
-            'jatuh_tempo' => '24 Agustus 2026',
-            'status' => 'Jatuh Tempo'
-        ],
-        [
-            'anggota' => 'Budi Santoso',
-            'id_anggota' => 'AGT-003',
-            'buku' => 'Belajar Database MySQL',
-            'tanggal_pinjam' => '10 Agustus 2026',
-            'jatuh_tempo' => '17 Agustus 2026',
-            'status' => 'Terlambat'
-        ],
-        [
-            'anggota' => 'Rina Amelia',
-            'id_anggota' => 'AGT-004',
-            'buku' => 'HTML & CSS Dasar',
-            'tanggal_pinjam' => '19 Agustus 2026',
-            'jatuh_tempo' => '26 Agustus 2026',
+            'id' => 2,
+            'anggota_id' => 2,
+            'buku_id' => 2,
+            'tanggal_pinjam' => '2026-08-17',
+            'tanggal_jatuh_tempo' => '2026-08-24',
             'status' => 'Dipinjam'
         ],
     ]);
 
-    $anggota = session('anggota', []);
-    $buku = session('buku', []);
+    /*
+    | Tambahkan nama anggota dan buku
+    | untuk ditampilkan di tabel.
+    */
+
+    foreach ($peminjaman as &$item) {
+
+        $item['anggota'] = 'Tidak diketahui';
+        $item['buku'] = 'Tidak diketahui';
+
+        foreach ($anggota as $a) {
+
+            if ($a['id'] == $item['anggota_id']) {
+                $item['anggota'] = $a['nama'];
+                break;
+            }
+
+        }
+
+        foreach ($buku as $b) {
+
+            if ($b['id'] == $item['buku_id']) {
+                $item['buku'] = $b['judul'];
+                break;
+            }
+
+        }
+    }
 
     return view('peminjaman', compact(
         'peminjaman',
@@ -285,6 +606,12 @@ Route::get('/peminjaman', function () {
 })->name('peminjaman.index');
 
 
+/*
+|--------------------------------------------------------------------------
+| SIMPAN PEMINJAMAN
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/peminjaman', function (Request $request) {
 
     if (!session('logged_in')) {
@@ -292,58 +619,209 @@ Route::post('/peminjaman', function (Request $request) {
     }
 
     $request->validate([
-        'anggota' => 'required',
-        'buku' => 'required',
-        'tanggal_pinjam' => 'required',
-        'jatuh_tempo' => 'required',
+        'anggota_id' => 'required',
+        'buku_id' => 'required',
+        'tanggal_pinjam' => 'required|date',
+        'tanggal_jatuh_tempo' => 'required|date|after_or_equal:tanggal_pinjam',
     ]);
 
-    $anggotaData = session('anggota', []);
-    $bukuData = session('buku', []);
-
-    $namaAnggota = $request->anggota;
-    $idAnggota = '';
-
-    foreach ($anggotaData as $item) {
-
-        if ($item['nama'] === $request->anggota) {
-            $idAnggota = $item['id_anggota'];
-            break;
-        }
-    }
-
+    $anggota = session('anggota', []);
+    $buku = session('buku', []);
     $peminjaman = session('peminjaman', []);
 
+    /*
+    | Cek anggota
+    */
+
+    $anggotaDitemukan = false;
+
+    foreach ($anggota as $item) {
+
+        if ($item['id'] == $request->anggota_id) {
+            $anggotaDitemukan = true;
+            break;
+        }
+
+    }
+
+    if (!$anggotaDitemukan) {
+
+        return redirect('/peminjaman')
+            ->with('error', 'Anggota tidak ditemukan.');
+
+    }
+
+
+    /*
+    | Cek buku dan stok
+    */
+
+    $bukuDitemukan = false;
+
+    foreach ($buku as $item) {
+
+        if ($item['id'] == $request->buku_id) {
+
+            $bukuDitemukan = true;
+
+            if ($item['stok'] <= 0) {
+
+                return redirect('/peminjaman')
+                    ->with('error', 'Stok buku sedang habis.');
+
+            }
+
+            break;
+        }
+
+    }
+
+    if (!$bukuDitemukan) {
+
+        return redirect('/peminjaman')
+            ->with('error', 'Buku tidak ditemukan.');
+
+    }
+
+
+    /*
+    | Buat ID peminjaman
+    */
+
+    $idBaru = count($peminjaman) + 1;
+
+
+    /*
+    | Simpan peminjaman
+    */
+
     $peminjaman[] = [
-        'anggota' => $namaAnggota,
-        'id_anggota' => $idAnggota,
-        'buku' => $request->buku,
-        'tanggal_pinjam' => date(
-            'd F Y',
-            strtotime($request->tanggal_pinjam)
-        ),
-        'jatuh_tempo' => date(
-            'd F Y',
-            strtotime($request->jatuh_tempo)
-        ),
+
+        'id' => $idBaru,
+
+        'anggota_id' => $request->anggota_id,
+
+        'buku_id' => $request->buku_id,
+
+        'tanggal_pinjam' => $request->tanggal_pinjam,
+
+        'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
+
         'status' => 'Dipinjam',
+
     ];
 
-    session(['peminjaman' => $peminjaman]);
 
-    return redirect('/peminjaman');
+    session([
+        'peminjaman' => $peminjaman
+    ]);
+
+
+    /*
+    | Kurangi stok buku
+    */
+
+    foreach ($buku as &$item) {
+
+        if ($item['id'] == $request->buku_id) {
+
+            $item['stok']--;
+
+            break;
+        }
+
+    }
+
+    session([
+        'buku' => $buku
+    ]);
+
+
+    return redirect('/peminjaman')
+        ->with('success', 'Peminjaman berhasil ditambahkan.');
 
 })->name('peminjaman.store');
 
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN UTAMA
+| PENGEMBALIAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pengembalian', function () {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $pengembalian = session('pengembalian', []);
+
+    $peminjaman = session('peminjaman', []);
+    $anggota = session('anggota', []);
+    $buku = session('buku', []);
+
+    return view('pengembalian', compact(
+        'pengembalian',
+        'peminjaman',
+        'anggota',
+        'buku'
+    ));
+
+})->name('pengembalian.index');
+
+
+Route::post('/pengembalian', function (Request $request) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $request->validate([
+        'peminjaman_id' => 'required',
+        'tanggal_kembali' => 'required|date',
+        'denda' => 'required|numeric|min:0',
+    ]);
+
+    $pengembalian = session('pengembalian', []);
+
+    $nextId = count($pengembalian) > 0
+        ? max(array_column($pengembalian, 'id')) + 1
+        : 1;
+
+    $pengembalian[] = [
+        'id' => $nextId,
+        'peminjaman_id' => $request->peminjaman_id,
+        'tanggal_kembali' => $request->tanggal_kembali,
+        'denda' => $request->denda,
+    ];
+
+    session(['pengembalian' => $pengembalian]);
+
+    // Update status peminjaman menjadi Dikembalikan
+    $peminjaman = session('peminjaman', []);
+
+    foreach ($peminjaman as &$item) {
+
+        if ($item['id'] == $request->peminjaman_id) {
+            $item['status'] = 'Dikembalikan';
+            break;
+        }
+    }
+
+    session(['peminjaman' => $peminjaman]);
+
+    return redirect('/pengembalian');
+
+})->name('pengembalian.store');
+
+
+/*
+|--------------------------------------------------------------------------
+| HOME
 |--------------------------------------------------------------------------
 */
 
 Route::get('/', function () {
-
     return redirect('/login');
-
 });
