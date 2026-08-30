@@ -1,6 +1,6 @@
 @extends('template.master')
 
-@section('title', 'Peminjaman - PerpusKita')
+@section('title', 'Pengembalian - PerpusKita')
 
 @section('content')
 
@@ -12,15 +12,15 @@
 
             <h2 class="fw-bold mb-1">
 
-                <i class="bi bi-journal-text me-2"></i>
+                <i class="bi bi-arrow-return-left me-2"></i>
 
-                Peminjaman
+                Pengembalian
 
             </h2>
 
             <p class="mb-0 opacity-75">
 
-                Kelola transaksi peminjaman buku.
+                Kelola pengembalian buku dan denda.
 
             </p>
 
@@ -29,11 +29,11 @@
 
         <button class="btn btn-add"
                 data-bs-toggle="collapse"
-                data-bs-target="#formPeminjaman">
+                data-bs-target="#formPengembalian">
 
             <i class="bi bi-plus-lg me-1"></i>
 
-            Tambah Peminjaman
+            Proses Pengembalian
 
         </button>
 
@@ -44,18 +44,18 @@
 
 <!-- FORM -->
 
-<div class="collapse mb-4" id="formPeminjaman">
+<div class="collapse mb-4" id="formPengembalian">
 
     <div class="card custom-card shadow-sm">
 
         <div class="card-body p-4">
 
             <h5 class="fw-bold mb-3">
-                Tambah Peminjaman
+                Proses Pengembalian
             </h5>
 
 
-            <form action="{{ route('peminjaman.store') }}"
+            <form action="{{ route('pengembalian.store') }}"
                   method="POST">
 
                 @csrf
@@ -65,23 +65,24 @@
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Anggota
+                            Peminjaman
                         </label>
 
-                        <select name="anggota_id"
+                        <select name="peminjaman_id"
                                 class="form-select"
                                 required>
 
                             <option value="">
-                                -- Pilih Anggota --
+                                -- Pilih Peminjaman --
                             </option>
 
-                            @foreach($anggota as $item)
+                            @foreach($peminjaman as $item)
 
                                 <option value="{{ $item['id'] }}">
 
-                                    {{ $item['nama'] }}
-                                    - {{ $item['nis'] }}
+                                    {{ $item['anggota'] }}
+                                    -
+                                    {{ $item['buku'] }}
 
                                 </option>
 
@@ -95,40 +96,11 @@
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Buku
-                        </label>
-
-                        <select name="buku_id"
-                                class="form-select"
-                                required>
-
-                            <option value="">
-                                -- Pilih Buku --
-                            </option>
-
-                            @foreach($buku as $item)
-
-                                <option value="{{ $item['id'] }}">
-
-                                    {{ $item['judul'] }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Tanggal Pinjam
+                            Tanggal Kembali
                         </label>
 
                         <input type="date"
-                               name="tanggal_pinjam"
+                               name="tanggal_kembali"
                                class="form-control"
                                required>
 
@@ -138,13 +110,15 @@
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
-                            Tanggal Jatuh Tempo
+                            Denda
                         </label>
 
-                        <input type="date"
-                               name="tanggal_jatuh_tempo"
+                        <input type="number"
+                               name="denda"
                                class="form-control"
-                               required>
+                               value="0"
+                               min="0"
+                               placeholder="0">
 
                     </div>
 
@@ -154,9 +128,9 @@
                 <button type="submit"
                         class="btn btn-add">
 
-                    <i class="bi bi-save me-1"></i>
+                    <i class="bi bi-check-lg me-1"></i>
 
-                    Simpan Peminjaman
+                    Simpan Pengembalian
 
                 </button>
 
@@ -178,11 +152,11 @@
         <div class="p-4">
 
             <h5 class="fw-bold mb-1">
-                Daftar Peminjaman
+                Riwayat Pengembalian
             </h5>
 
             <small class="text-muted">
-                Riwayat transaksi peminjaman buku.
+                Data buku yang telah dikembalikan.
             </small>
 
         </div>
@@ -199,9 +173,8 @@
                         <th>No</th>
                         <th>Anggota</th>
                         <th>Buku</th>
-                        <th>Tanggal Pinjam</th>
-                        <th>Jatuh Tempo</th>
-                        <th>Status</th>
+                        <th>Tanggal Kembali</th>
+                        <th>Denda</th>
 
                     </tr>
 
@@ -210,7 +183,7 @@
 
                 <tbody>
 
-                    @forelse($peminjaman as $item)
+                    @forelse($pengembalian as $item)
 
                     <tr>
 
@@ -219,9 +192,7 @@
                         </td>
 
                         <td>
-                            <strong>
-                                {{ $item['anggota'] }}
-                            </strong>
+                            {{ $item['anggota'] }}
                         </td>
 
                         <td>
@@ -229,21 +200,12 @@
                         </td>
 
                         <td>
-                            {{ $item['tanggal_pinjam'] }}
-                        </td>
-
-                        <td>
-                            {{ $item['tanggal_jatuh_tempo'] }}
+                            {{ $item['tanggal_kembali'] }}
                         </td>
 
                         <td>
 
-                            <span class="badge rounded-pill"
-                                  style="background:#d9e2cf;color:#435334;">
-
-                                {{ $item['status'] }}
-
-                            </span>
+                            Rp {{ number_format($item['denda'], 0, ',', '.') }}
 
                         </td>
 
@@ -253,10 +215,10 @@
 
                     <tr>
 
-                        <td colspan="6"
+                        <td colspan="5"
                             class="text-center text-muted py-4">
 
-                            Belum ada data peminjaman.
+                            Belum ada data pengembalian.
 
                         </td>
 

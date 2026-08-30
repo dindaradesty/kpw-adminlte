@@ -1,126 +1,52 @@
 @extends('template.master')
 
-@section('title', 'Data Anggota - PerpusKita')
+@section('title', 'Anggota - PerpusKita')
 
 @section('content')
 
-<style>
-    body {
-        background: #f5f1e8;
-    }
-
-    .member-header {
-        background: linear-gradient(135deg, #435334, #6b7d52);
-        color: white;
-        border-radius: 20px;
-        padding: 28px 30px;
-        margin-bottom: 25px;
-    }
-
-    .member-card {
-        border: none;
-        border-radius: 18px;
-        background: white;
-        transition: .2s;
-    }
-
-    .member-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .member-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 23px;
-    }
-
-    .member-table {
-        border-radius: 20px;
-        overflow: hidden;
-        background: white;
-    }
-
-    .member-table thead {
-        background: #f0eadf;
-        color: #435334;
-    }
-
-    .member-table th {
-        padding: 16px;
-        border: none;
-    }
-
-    .member-table td {
-        padding: 15px;
-        vertical-align: middle;
-    }
-
-    .avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .btn-member {
-        background: #d4a373;
-        border: none;
-        color: white;
-        border-radius: 10px;
-        padding: 10px 18px;
-    }
-
-    .btn-member:hover {
-        background: #b98255;
-        color: white;
-    }
-</style>
-
-
-<!-- HEADER -->
-<div class="member-header">
+<div class="page-header">
 
     <div class="d-flex justify-content-between align-items-center">
 
         <div>
 
             <h2 class="fw-bold mb-1">
-                <i class="bi bi-people-fill me-2"></i>
+
+                <i class="bi bi-people me-2"></i>
+
                 Data Anggota
+
             </h2>
 
             <p class="mb-0 opacity-75">
-                Kelola anggota yang terdaftar di PerpusKita.
+
+                Kelola data anggota perpustakaan.
+
             </p>
 
         </div>
 
-        <button class="btn btn-member"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#formTambahAnggota">
 
-    <i class="bi bi-person-plus-fill me-1"></i>
-    Tambah Anggota
+        <button class="btn btn-add"
+                data-bs-toggle="collapse"
+                data-bs-target="#formAnggota">
 
-</button>
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Tambah Anggota
+
+        </button>
 
     </div>
 
 </div>
 
-<div class="collapse mb-4" id="formTambahAnggota">
 
-    <div class="card border-0 shadow-sm"
-         style="border-radius:20px;">
+<!-- FORM -->
+
+<div class="collapse mb-4" id="formAnggota">
+
+    <div class="card custom-card shadow-sm">
 
         <div class="card-body p-4">
 
@@ -128,65 +54,81 @@
                 Tambah Data Anggota
             </h5>
 
-            <form action="{{ route('anggota.store') }}" method="POST">
+
+            <form action="{{ route('anggota.store') }}"
+                  method="POST">
+
                 @csrf
 
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
+
                         <label class="form-label">
-                            Nama Anggota
+                            Nama
                         </label>
 
                         <input type="text"
                                name="nama"
                                class="form-control"
-                               placeholder="Masukkan nama anggota"
+                               placeholder="Nama lengkap"
                                required>
+
                     </div>
 
+
                     <div class="col-md-6 mb-3">
+
                         <label class="form-label">
-                            ID Anggota
+                            NIS
                         </label>
 
                         <input type="text"
-                               name="id_anggota"
+                               name="nis"
                                class="form-control"
-                               placeholder="Contoh: AGT-005"
+                               placeholder="Nomor Induk Siswa"
                                required>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">
-                            Email
-                        </label>
-
-                        <input type="email"
-                               name="email"
-                               class="form-control"
-                               placeholder="Masukkan email"
-                               required>
-                    </div>
 
                     <div class="col-md-6 mb-3">
+
                         <label class="form-label">
-                            Kelas
+                            No. HP
                         </label>
 
                         <input type="text"
-                               name="kelas"
+                               name="no_hp"
                                class="form-control"
-                               placeholder="Contoh: XI RPL 1"
+                               placeholder="08xxxxxxxxxx"
                                required>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Alamat
+                        </label>
+
+                        <textarea name="alamat"
+                                  class="form-control"
+                                  rows="2"
+                                  placeholder="Alamat anggota"
+                                  required></textarea>
+
                     </div>
 
                 </div>
 
+
                 <button type="submit"
-                        class="btn btn-member">
+                        class="btn btn-add">
 
                     <i class="bi bi-save me-1"></i>
+
                     Simpan Anggota
 
                 </button>
@@ -201,36 +143,22 @@
 
 
 <!-- STATISTIK -->
+
 <div class="row mb-4">
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
 
-        <div class="card member-card shadow-sm">
+        <div class="card custom-card shadow-sm">
 
             <div class="card-body">
 
-                <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    Total Anggota
+                </small>
 
-                    <div>
-
-                        <small class="text-muted">
-                            Total Anggota
-                        </small>
-
-                        <h2 class="fw-bold mt-1 mb-0">
-    {{ count($anggota) }}
-</h2>
-
-                    </div>
-
-                    <div class="member-icon"
-                         style="background:#d9e2cf;color:#435334;">
-
-                        <i class="bi bi-people-fill"></i>
-
-                    </div>
-
-                </div>
+                <h2 class="fw-bold mt-1">
+                    {{ count($anggota) }}
+                </h2>
 
             </div>
 
@@ -239,69 +167,19 @@
     </div>
 
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
 
-        <div class="card member-card shadow-sm">
-
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <small class="text-muted">
-                            Anggota Aktif
-                        </small>
-<h2 class="fw-bold mt-1 mb-0">
-    {{ collect($anggota)->where('status', 'Aktif')->count() }}
-</h2>
-
-                    </div>
-
-                    <div class="member-icon"
-                         style="background:#e5dfc8;color:#756b3c;">
-
-                        <i class="bi bi-person-check-fill"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="col-md-4 mb-3">
-
-        <div class="card member-card shadow-sm">
+        <div class="card custom-card shadow-sm">
 
             <div class="card-body">
 
-                <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    Anggota Terdaftar
+                </small>
 
-                    <div>
-
-                        <small class="text-muted">
-                            Peminjam Aktif
-                        </small>
-
-                        <h2 class="fw-bold mt-1 mb-0">
-                            37
-                        </h2>
-
-                    </div>
-
-                    <div class="member-icon"
-                         style="background:#ead7b7;color:#9a6b3f;">
-
-                        <i class="bi bi-journal-bookmark-fill"></i>
-
-                    </div>
-
-                </div>
+                <h2 class="fw-bold mt-1">
+                    {{ count($anggota) }}
+                </h2>
 
             </div>
 
@@ -312,64 +190,38 @@
 </div>
 
 
-<!-- DAFTAR ANGGOTA -->
-<div class="card member-table border-0 shadow-sm">
+<!-- TABLE -->
+
+<div class="card custom-card shadow-sm">
 
     <div class="card-body p-0">
 
         <div class="p-4">
 
-            <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-1">
+                Daftar Anggota
+            </h5>
 
-                <div>
-
-                    <h5 class="fw-bold mb-1">
-                        Daftar Anggota
-                    </h5>
-
-                    <small class="text-muted">
-                        Data anggota perpustakaan
-                    </small>
-
-                </div>
-
-                <div style="width:230px;">
-
-                    <div class="input-group">
-
-                        <span class="input-group-text bg-white">
-
-                            <i class="bi bi-search"></i>
-
-                        </span>
-
-                        <input type="text"
-                               class="form-control"
-                               placeholder="Cari anggota...">
-
-                    </div>
-
-                </div>
-
-            </div>
+            <small class="text-muted">
+                Data anggota PerpusKita.
+            </small>
 
         </div>
 
 
         <div class="table-responsive">
 
-            <table class="table member-table mb-0">
+            <table class="table custom-table mb-0">
 
                 <thead>
 
                     <tr>
 
                         <th>No</th>
-                        <th>Anggota</th>
-                        <th>ID Anggota</th>
-                        <th>Kelas</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th>Nama</th>
+                        <th>NIS</th>
+                        <th>Alamat</th>
+                        <th>No. HP</th>
 
                     </tr>
 
@@ -378,79 +230,52 @@
 
                 <tbody>
 
-@foreach($anggota as $item)
+                    @forelse($anggota as $item)
 
-<tr>
+                    <tr>
 
-    <td>
-        {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
-    </td>
+                        <td>
+                            {{ $loop->iteration }}
+                        </td>
 
-    <td>
+                        <td>
 
-        <div class="d-flex align-items-center">
+                            <strong>
+                                {{ $item['nama'] }}
+                            </strong>
 
-            <div class="avatar"
-                 style="background:#d9e2cf;color:#435334;">
+                        </td>
 
-                {{ strtoupper(substr($item['nama'], 0, 1)) }}
+                        <td>
+                            {{ $item['nis'] }}
+                        </td>
 
-            </div>
+                        <td>
+                            {{ $item['alamat'] }}
+                        </td>
 
-            <div>
+                        <td>
+                            {{ $item['no_hp'] }}
+                        </td>
 
-                <strong>
-                    {{ $item['nama'] }}
-                </strong>
+                    </tr>
 
-                <br>
+                    @empty
 
-                <small class="text-muted">
-                    {{ $item['email'] }}
-                </small>
+                    <tr>
 
-            </div>
+                        <td colspan="5"
+                            class="text-center text-muted py-4">
 
-        </div>
+                            Belum ada data anggota.
 
-    </td>
+                        </td>
 
-    <td>
-        {{ $item['id_anggota'] }}
-    </td>
+                    </tr>
 
-    <td>
-        {{ $item['kelas'] }}
-    </td>
+                    @endforelse
 
-    <td>
-
-        <span class="badge rounded-pill"
-              style="background:#d9e2cf;color:#435334;">
-
-            {{ $item['status'] }}
-
-        </span>
-
-    </td>
-
-    <td>
-
-        <button class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-eye"></i>
-        </button>
-
-        <button class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-pencil"></i>
-        </button>
-
-    </td>
-
-</tr>
-
-@endforeach
-
-</tbody>
+                </tbody>
 
             </table>
 
