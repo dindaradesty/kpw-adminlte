@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('anggota', function (Blueprint $table) {
             $table->id();
+            $table->string('nama');
+            $table->text('alamat');
+            $table->string('no_telp');
             $table->timestamps();
         });
     }
