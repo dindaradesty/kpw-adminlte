@@ -27,15 +27,7 @@
         </div>
 
 
-        <button class="btn btn-add"
-                data-bs-toggle="collapse"
-                data-bs-target="#formPeminjaman">
-
-            <i class="bi bi-plus-lg me-1"></i>
-
-            Tambah Peminjaman
-
-        </button>
+   
 
     </div>
 
