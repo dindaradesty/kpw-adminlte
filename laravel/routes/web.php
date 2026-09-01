@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BukuController;
+use App\Http\Controllers\KategoriController;
 
 
 /*
@@ -215,7 +217,7 @@ Route::get('/dashboard', function () {
 
 })->name('dashboard');
 
-/*
+/* 
 |--------------------------------------------------------------------------
 | BUKU
 |--------------------------------------------------------------------------
@@ -286,6 +288,21 @@ Route::get('/buku', function () {
 })->name('buku.index');
 
 
+// FORM TAMBAH BUKU
+Route::get('/buku/create', function () {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $kategori = session('kategori', []);
+
+    return view('buku-create', compact('kategori'));
+
+})->name('buku.create');
+
+
+// SIMPAN BUKU
 Route::post('/buku', function (Request $request) {
 
     if (!session('logged_in')) {
@@ -315,14 +332,128 @@ Route::post('/buku', function (Request $request) {
         'kategori_id' => $request->kategori_id,
     ];
 
-    session(['buku' => $buku]);
+    session([
+        'buku' => $buku
+    ]);
 
-    return redirect('/buku');
+    return redirect()
+        ->route('buku.index')
+        ->with('success', 'Data buku berhasil ditambahkan.');
 
 })->name('buku.store');
 
 
-/*
+// FORM EDIT BUKU
+Route::get('/buku/{id}/edit', function ($id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $buku = session('buku', []);
+    $kategori = session('kategori', []);
+
+    $data = null;
+
+    foreach ($buku as $item) {
+
+        if ($item['id'] == $id) {
+            $data = $item;
+            break;
+        }
+    }
+
+    if (!$data) {
+        return redirect('/buku')
+            ->with('error', 'Buku tidak ditemukan.');
+    }
+
+    return view('buku-edit', compact('data', 'kategori'));
+
+})->name('buku.edit');
+
+
+// UPDATE BUKU
+Route::post('/buku/{id}', function (Request $request, $id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $request->validate([
+        'judul' => 'required',
+        'penulis' => 'required',
+        'tahun_terbit' => 'required|integer',
+        'stok' => 'required|integer|min:0',
+        'kategori_id' => 'required',
+    ]);
+
+    $buku = session('buku', []);
+
+    $ditemukan = false;
+
+    foreach ($buku as &$item) {
+
+        if ($item['id'] == $id) {
+
+            $item['judul'] = $request->judul;
+            $item['penulis'] = $request->penulis;
+            $item['tahun_terbit'] = $request->tahun_terbit;
+            $item['stok'] = $request->stok;
+            $item['kategori_id'] = $request->kategori_id;
+
+            $ditemukan = true;
+            break;
+        }
+    }
+
+    unset($item);
+
+    if (!$ditemukan) {
+        return redirect('/buku')
+            ->with('error', 'Buku tidak ditemukan.');
+    }
+
+    session([
+        'buku' => $buku
+    ]);
+
+    return redirect()
+        ->route('buku.index')
+        ->with('success', 'Data buku berhasil diubah.');
+
+})->name('buku.update');
+
+
+// DELETE BUKU
+Route::post('/buku/{id}/delete', function ($id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $buku = session('buku', []);
+
+    $bukuBaru = [];
+
+    foreach ($buku as $item) {
+
+        if ($item['id'] != $id) {
+            $bukuBaru[] = $item;
+        }
+    }
+
+    session([
+        'buku' => $bukuBaru
+    ]);
+
+    return redirect()
+        ->route('buku.index')
+        ->with('success', 'Data buku berhasil dihapus.');
+
+})->name('buku.delete');
+
+/* 
 |--------------------------------------------------------------------------
 | KATEGORI
 |--------------------------------------------------------------------------
@@ -358,6 +489,19 @@ Route::get('/kategori', function () {
 })->name('kategori.index');
 
 
+// FORM TAMBAH KATEGORI
+Route::get('/kategori/create', function () {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    return view('kategori-create');
+
+})->name('kategori.create');
+
+
+// SIMPAN KATEGORI
 Route::post('/kategori', function (Request $request) {
 
     if (!session('logged_in')) {
@@ -365,7 +509,7 @@ Route::post('/kategori', function (Request $request) {
     }
 
     $request->validate([
-        'nama' => 'required'
+        'nama' => 'required|min:3',
     ]);
 
     $kategori = session('kategori', []);
@@ -379,12 +523,116 @@ Route::post('/kategori', function (Request $request) {
         'nama' => $request->nama,
     ];
 
-    session(['kategori' => $kategori]);
+    session([
+        'kategori' => $kategori
+    ]);
 
-    return redirect('/kategori');
+    return redirect()
+        ->route('kategori.index')
+        ->with('success', 'Data kategori berhasil ditambahkan.');
 
 })->name('kategori.store');
 
+
+// FORM EDIT KATEGORI
+Route::get('/kategori/{id}/edit', function ($id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $kategori = session('kategori', []);
+
+    $data = null;
+
+    foreach ($kategori as $item) {
+        if ($item['id'] == $id) {
+            $data = $item;
+            break;
+        }
+    }
+
+    if (!$data) {
+        return redirect('/kategori')
+            ->with('error', 'Kategori tidak ditemukan.');
+    }
+
+    return view('kategori-edit', compact('data'));
+
+})->name('kategori.edit');
+
+
+// UPDATE KATEGORI
+Route::post('/kategori/{id}', function (Request $request, $id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $request->validate([
+        'nama' => 'required|min:3',
+    ]);
+
+    $kategori = session('kategori', []);
+
+    $ditemukan = false;
+
+    foreach ($kategori as &$item) {
+
+        if ($item['id'] == $id) {
+
+            $item['nama'] = $request->nama;
+
+            $ditemukan = true;
+            break;
+        }
+    }
+
+    unset($item);
+
+    if (!$ditemukan) {
+        return redirect('/kategori')
+            ->with('error', 'Kategori tidak ditemukan.');
+    }
+
+    session([
+        'kategori' => $kategori
+    ]);
+
+    return redirect()
+        ->route('kategori.index')
+        ->with('success', 'Data kategori berhasil diubah.');
+
+})->name('kategori.update');
+
+
+// DELETE KATEGORI
+Route::post('/kategori/{id}/delete', function ($id) {
+
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+
+    $kategori = session('kategori', []);
+
+    $kategoriBaru = [];
+
+    foreach ($kategori as $item) {
+
+        if ($item['id'] != $id) {
+            $kategoriBaru[] = $item;
+        }
+    }
+
+    session([
+        'kategori' => $kategoriBaru
+    ]);
+
+    return redirect()
+        ->route('kategori.index')
+        ->with('success', 'Data kategori berhasil dihapus.');
+
+})->name('kategori.delete');
 
 /*
 |--------------------------------------------------------------------------
@@ -466,6 +714,7 @@ Route::post('/anggota', function (Request $request) {
     return redirect('/anggota');
 
 })->name('anggota.store');
+
 
 
 /*
