@@ -26,6 +26,117 @@
 
         </div>
 
+
+        <button class="btn btn-add"
+                data-bs-toggle="collapse"
+                data-bs-target="#formAnggota">
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Tambah Anggota
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- FORM -->
+
+<div class="collapse mb-4" id="formAnggota">
+
+    <div class="card custom-card shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                Tambah Data Anggota
+            </h5>
+
+
+            <form action="{{ route('anggota.store') }}"
+                  method="POST">
+
+                @csrf
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Nama
+                        </label>
+
+                        <input type="text"
+                               name="nama"
+                               class="form-control"
+                               placeholder="Nama lengkap"
+                               required>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            NIS
+                        </label>
+
+                        <input type="text"
+                               name="nis"
+                               class="form-control"
+                               placeholder="Nomor Induk Siswa"
+                               required>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            No. HP
+                        </label>
+
+                        <input type="text"
+                               name="no_hp"
+                               class="form-control"
+                               placeholder="08xxxxxxxxxx"
+                               required>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Alamat
+                        </label>
+
+                        <textarea name="alamat"
+                                  class="form-control"
+                                  rows="2"
+                                  placeholder="Alamat anggota"
+                                  required></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit"
+                        class="btn btn-add">
+
+                    <i class="bi bi-save me-1"></i>
+
+                    Simpan Anggota
+
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
 
 </div>
