@@ -27,7 +27,15 @@
         </div>
 
 
-      
+        <button class="btn btn-add"
+                data-bs-toggle="collapse"
+                data-bs-target="#formPengembalian">
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Proses Pengembalian
+
+        </button>
 
     </div>
 
@@ -81,151 +89,3 @@
                             @endforeach
 
                         </select>
-
-                    </div>
-
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Tanggal Kembali
-                        </label>
-
-                        <input type="date"
-                               name="tanggal_kembali"
-                               class="form-control"
-                               required>
-
-                    </div>
-
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Denda
-                        </label>
-
-                        <input type="number"
-                               name="denda"
-                               class="form-control"
-                               value="0"
-                               min="0"
-                               placeholder="0">
-
-                    </div>
-
-                </div>
-
-
-                <button type="submit"
-                        class="btn btn-add">
-
-                    <i class="bi bi-check-lg me-1"></i>
-
-                    Simpan Pengembalian
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- TABLE -->
-
-<div class="card custom-card shadow-sm">
-
-    <div class="card-body p-0">
-
-        <div class="p-4">
-
-            <h5 class="fw-bold mb-1">
-                Riwayat Pengembalian
-            </h5>
-
-            <small class="text-muted">
-                Data buku yang telah dikembalikan.
-            </small>
-
-        </div>
-
-
-        <div class="table-responsive">
-
-            <table class="table custom-table mb-0">
-
-                <thead>
-
-                    <tr>
-
-                        <th>No</th>
-                        <th>Anggota</th>
-                        <th>Buku</th>
-                        <th>Tanggal Kembali</th>
-                        <th>Denda</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    @forelse($pengembalian as $item)
-
-                    <tr>
-
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-
-                        <td>
-                            {{ $item['anggota'] }}
-                        </td>
-
-                        <td>
-                            {{ $item['buku'] }}
-                        </td>
-
-                        <td>
-                            {{ $item['tanggal_kembali'] }}
-                        </td>
-
-                        <td>
-
-                            Rp {{ number_format($item['denda'], 0, ',', '.') }}
-
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-
-                        <td colspan="5"
-                            class="text-center text-muted py-4">
-
-                            Belum ada data pengembalian.
-
-                        </td>
-
-                    </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</div>
-
-@endsection
