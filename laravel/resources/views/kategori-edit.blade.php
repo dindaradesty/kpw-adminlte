@@ -1,0 +1,6 @@
+@extends('template.master')
+@section('title','Edit Kategori - PerpusKita')
+@section('content')<div class="page-header"><h2 class="fw-bold mb-1"><i class="bi bi-pencil-square me-2"></i>Edit Kategori</h2><p class="mb-0 opacity-75">Ubah nama kategori.</p></div>@if(session('success'))<div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle me-2"></i>{{ session('success') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>@endif
+@if(session('error'))<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>@endif
+@if($errors->any())<div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+<div class="card custom-card shadow-sm"><div class="card-body p-4"><form action="{{ route('kategori.update',$kategori->id) }}" method="POST">@csrf @method('PUT')<div class="mb-3"><label class="form-label">Nama Kategori</label><input name="nama" class="form-control" value="{{ $kategori->nama }}" required></div><a href="{{ route('kategori.index') }}" class="btn btn-secondary me-2">Batal</a><button class="btn btn-add">Simpan Perubahan</button></form></div></div>@endsection
