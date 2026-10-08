@@ -6,5 +6,11 @@ Kelompok 6:
 3. Kartika Puji Lestari
 4. Sabrina Laura Safitri
 
+Login:
+1. Sebagai Admin
 Username: admin
-Password: 12345
+Password: admin12345
+
+2. Sebagai Petugas
+Username: petugas
+Password: password123
