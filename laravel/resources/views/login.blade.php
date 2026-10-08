@@ -99,10 +99,17 @@
             margin-bottom: 18px;
         }
 
+        .success-box {
+            background: #e3edda;
+            color: #435334;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+        }
+
     </style>
 
 </head>
-
 
 <body>
 
@@ -111,16 +118,11 @@
     <div class="login-card">
 
         <!-- LOGO -->
-
         <div class="logo-box">
-
             <i class="bi bi-book-half"></i>
-
         </div>
 
-
         <!-- JUDUL -->
-
         <div class="text-center mb-4">
 
             <h2 class="login-title">
@@ -133,32 +135,39 @@
 
         </div>
 
-
-        <!-- ERROR -->
-
-        @if(session('error'))
+        <!-- ERROR VALIDATION -->
+        @if ($errors->any())
 
             <div class="error-box">
 
                 <i class="bi bi-exclamation-circle me-1"></i>
 
-                {{ session('error') }}
+                {{ $errors->first() }}
 
             </div>
 
         @endif
 
+        <!-- SUCCESS -->
+        @if (session('success'))
+
+            <div class="success-box">
+
+                <i class="bi bi-check-circle me-1"></i>
+
+                {{ session('success') }}
+
+            </div>
+
+        @endif
 
         <!-- FORM -->
-
-        <form action="{{ url('/login') }}"
+        <form action="{{ route('login.authenticate') }}"
               method="POST">
 
             @csrf
 
-
             <!-- USERNAME -->
-
             <div class="mb-3">
 
                 <label class="form-label fw-semibold">
@@ -168,14 +177,13 @@
                 <div class="input-group">
 
                     <span class="input-group-text">
-
                         <i class="bi bi-person"></i>
-
                     </span>
 
                     <input type="text"
                            name="username"
                            class="form-control"
+                           value="{{ old('username') }}"
                            placeholder="Masukkan username"
                            required>
 
@@ -183,9 +191,7 @@
 
             </div>
 
-
             <!-- PASSWORD -->
-
             <div class="mb-4">
 
                 <label class="form-label fw-semibold">
@@ -195,9 +201,7 @@
                 <div class="input-group">
 
                     <span class="input-group-text">
-
                         <i class="bi bi-lock"></i>
-
                     </span>
 
                     <input type="password"
@@ -210,9 +214,7 @@
 
             </div>
 
-
             <!-- BUTTON -->
-
             <button type="submit"
                     class="login-button">
 
@@ -224,13 +226,23 @@
 
         </form>
 
+        <!-- REGISTER -->
+        <div class="text-center mt-3">
+
+            <span class="text-muted">
+                Belum punya akun?
+            </span>
+
+            <a href="{{ route('register') }}">
+                Daftar sekarang
+            </a>
+
+        </div>
 
         <div class="text-center mt-4">
 
             <small class="text-muted">
-
                 PerpusKita © 2026
-
             </small>
 
         </div>

@@ -12,10 +12,6 @@ class BukuController extends Controller
 {
     public function index()
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $buku = Buku::with('kategori')
             ->orderBy('id')
             ->get();
@@ -27,10 +23,6 @@ class BukuController extends Controller
 
     public function store(StoreBukuRequest $request)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         Buku::create($request->validated());
 
         return redirect()
@@ -40,10 +32,6 @@ class BukuController extends Controller
 
     public function show(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $buku = Buku::with('kategori')->find($id);
 
         if (!$buku) {
@@ -57,10 +45,6 @@ class BukuController extends Controller
 
     public function edit(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $buku = Buku::find($id);
 
         if (!$buku) {
@@ -71,15 +55,16 @@ class BukuController extends Controller
 
         $kategori = Kategori::orderBy('nama')->get();
 
-        return view('buku-edit', compact('buku', 'kategori'));
+        return view(
+            'buku-edit',
+            compact('buku', 'kategori')
+        );
     }
 
-    public function update(UpdateBukuRequest $request, string $id)
-    {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
+    public function update(
+        UpdateBukuRequest $request,
+        string $id
+    ) {
         $buku = Buku::find($id);
 
         if (!$buku) {
@@ -97,10 +82,6 @@ class BukuController extends Controller
 
     public function destroy(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $buku = Buku::find($id);
 
         if (!$buku) {
