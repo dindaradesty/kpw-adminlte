@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreKategoriRequest;
 use App\Http\Requests\UpdateKategoriRequest;
 use App\Models\Kategori;
-use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class KategoriController extends Controller
 {
     public function index()
     {
-        if (!session('logged_in')) return redirect('/login');
-
         $kategori = Kategori::orderBy('id')->get();
 
         return view('kategori', compact('kategori'));
@@ -20,8 +18,6 @@ class KategoriController extends Controller
 
     public function store(StoreKategoriRequest $request)
     {
-        if (!session('logged_in')) return redirect('/login');
-
         Kategori::create([
             'nama' => $request->nama,
         ]);
@@ -33,8 +29,6 @@ class KategoriController extends Controller
 
     public function show(string $id)
     {
-        if (!session('logged_in')) return redirect('/login');
-
         $kategori = Kategori::find($id);
 
         if (!$kategori) {
@@ -48,8 +42,6 @@ class KategoriController extends Controller
 
     public function edit(string $id)
     {
-        if (!session('logged_in')) return redirect('/login');
-
         $kategori = Kategori::find($id);
 
         if (!$kategori) {
@@ -61,10 +53,10 @@ class KategoriController extends Controller
         return view('kategori-edit', compact('kategori'));
     }
 
-    public function update(UpdateKategoriRequest $request, string $id)
-    {
-        if (!session('logged_in')) return redirect('/login');
-
+    public function update(
+        UpdateKategoriRequest $request,
+        string $id
+    ) {
         $kategori = Kategori::find($id);
 
         if (!$kategori) {
@@ -84,8 +76,6 @@ class KategoriController extends Controller
 
     public function destroy(string $id)
     {
-        if (!session('logged_in')) return redirect('/login');
-
         $kategori = Kategori::find($id);
 
         if (!$kategori) {
@@ -96,7 +86,7 @@ class KategoriController extends Controller
 
         try {
             $kategori->delete();
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             return redirect()
                 ->route('kategori.index')
                 ->with(

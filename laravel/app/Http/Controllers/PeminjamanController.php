@@ -13,10 +13,6 @@ class PeminjamanController extends Controller
 {
     public function index()
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $peminjaman = Peminjaman::with(['anggota', 'buku'])
             ->orderByDesc('id')
             ->get();
@@ -24,15 +20,14 @@ class PeminjamanController extends Controller
         $anggota = Anggota::orderBy('nama')->get();
         $buku = Buku::orderBy('judul')->get();
 
-        return view('peminjaman', compact('peminjaman', 'anggota', 'buku'));
+        return view(
+            'peminjaman',
+            compact('peminjaman', 'anggota', 'buku')
+        );
     }
 
     public function store(StorePeminjamanRequest $request)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         DB::transaction(function () use ($request) {
 
             $buku = Buku::where('id', $request->buku_id)
@@ -61,52 +56,54 @@ class PeminjamanController extends Controller
 
     public function show(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $peminjaman = Peminjaman::with(['anggota', 'buku'])
             ->find($id);
 
         if (!$peminjaman) {
             return redirect()
                 ->route('peminjaman.index')
-                ->with('error', 'Data peminjaman tidak ditemukan.');
+                ->with(
+                    'error',
+                    'Data peminjaman tidak ditemukan.'
+                );
         }
 
-        return view('peminjaman-show', compact('peminjaman'));
+        return view(
+            'peminjaman-show',
+            compact('peminjaman')
+        );
     }
 
     public function edit(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $peminjaman = Peminjaman::find($id);
 
         if (!$peminjaman) {
             return redirect()
                 ->route('peminjaman.index')
-                ->with('error', 'Data peminjaman tidak ditemukan.');
+                ->with(
+                    'error',
+                    'Data peminjaman tidak ditemukan.'
+                );
         }
 
         $anggota = Anggota::orderBy('nama')->get();
         $buku = Buku::orderBy('judul')->get();
 
-        return view('peminjaman-edit', compact(
-            'peminjaman',
-            'anggota',
-            'buku'
-        ));
+        return view(
+            'peminjaman-edit',
+            compact(
+                'peminjaman',
+                'anggota',
+                'buku'
+            )
+        );
     }
 
-    public function update(UpdatePeminjamanRequest $request, string $id)
-    {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
+    public function update(
+        UpdatePeminjamanRequest $request,
+        string $id
+    ) {
         DB::transaction(function () use ($request, $id) {
 
             $peminjaman = Peminjaman::where('id', $id)
@@ -114,14 +111,12 @@ class PeminjamanController extends Controller
                 ->first();
 
             if (!$peminjaman) {
-                abort(404, 'Data peminjaman tidak ditemukan.');
+                abort(
+                    404,
+                    'Data peminjaman tidak ditemukan.'
+                );
             }
 
-            /*
-             * Jika peminjaman lama masih Dipinjam:
-             * stok buku lama harus dikembalikan ketika
-             * status berubah atau buku diganti.
-             */
             if (
                 $peminjaman->status === 'Dipinjam' &&
                 (
@@ -136,10 +131,6 @@ class PeminjamanController extends Controller
                 }
             }
 
-            /*
-             * Jika status baru Dipinjam dan buku berubah
-             * atau sebelumnya Dikembalikan, kurangi stok buku baru.
-             */
             if (
                 $request->status === 'Dipinjam' &&
                 (
@@ -147,12 +138,18 @@ class PeminjamanController extends Controller
                     $peminjaman->buku_id != $request->buku_id
                 )
             ) {
-                $newBook = Buku::where('id', $request->buku_id)
+                $newBook = Buku::where(
+                    'id',
+                    $request->buku_id
+                )
                     ->lockForUpdate()
                     ->first();
 
                 if (!$newBook || $newBook->stok <= 0) {
-                    abort(422, 'Stok buku tujuan sedang habis.');
+                    abort(
+                        422,
+                        'Stok buku tujuan sedang habis.'
+                    );
                 }
 
                 $newBook->decrement('stok');
@@ -169,15 +166,14 @@ class PeminjamanController extends Controller
 
         return redirect()
             ->route('peminjaman.index')
-            ->with('success', 'Data peminjaman berhasil diubah.');
+            ->with(
+                'success',
+                'Data peminjaman berhasil diubah.'
+            );
     }
 
     public function destroy(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         DB::transaction(function () use ($id) {
 
             $peminjaman = Peminjaman::where('id', $id)
@@ -185,10 +181,12 @@ class PeminjamanController extends Controller
                 ->first();
 
             if (!$peminjaman) {
-                abort(404, 'Data peminjaman tidak ditemukan.');
+                abort(
+                    404,
+                    'Data peminjaman tidak ditemukan.'
+                );
             }
 
-            // Kalau masih dipinjam, stok buku dikembalikan.
             if ($peminjaman->status === 'Dipinjam') {
                 $buku = Buku::find($peminjaman->buku_id);
 
@@ -202,6 +200,9 @@ class PeminjamanController extends Controller
 
         return redirect()
             ->route('peminjaman.index')
-            ->with('success', 'Data peminjaman berhasil dihapus.');
+            ->with(
+                'success',
+                'Data peminjaman berhasil dihapus.'
+            );
     }
 }

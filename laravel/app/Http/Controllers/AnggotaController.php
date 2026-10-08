@@ -10,10 +10,6 @@ class AnggotaController extends Controller
 {
     public function index()
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $anggota = Anggota::orderBy('id')->get();
 
         return view('anggota', compact('anggota'));
@@ -21,10 +17,6 @@ class AnggotaController extends Controller
 
     public function store(StoreAnggotaRequest $request)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         Anggota::create($request->validated());
 
         return redirect()
@@ -34,10 +26,6 @@ class AnggotaController extends Controller
 
     public function show(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $anggota = Anggota::find($id);
 
         if (!$anggota) {
@@ -51,10 +39,6 @@ class AnggotaController extends Controller
 
     public function edit(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $anggota = Anggota::find($id);
 
         if (!$anggota) {
@@ -66,12 +50,10 @@ class AnggotaController extends Controller
         return view('anggota-edit', compact('anggota'));
     }
 
-    public function update(UpdateAnggotaRequest $request, string $id)
-    {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
+    public function update(
+        UpdateAnggotaRequest $request,
+        string $id
+    ) {
         $anggota = Anggota::find($id);
 
         if (!$anggota) {
@@ -89,10 +71,6 @@ class AnggotaController extends Controller
 
     public function destroy(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $anggota = Anggota::find($id);
 
         if (!$anggota) {

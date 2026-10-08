@@ -207,43 +207,63 @@
 
             <ul class="navbar-nav ms-auto">
 
-                <li class="nav-item dropdown">
+                @auth
+                    <li class="nav-item dropdown">
 
-                    <a class="nav-link dropdown-toggle"
-                       href="#"
-                       data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           data-bs-toggle="dropdown">
 
-                        <i class="bi bi-person-circle me-1"></i>
+                            <i class="bi bi-person-circle me-1"></i>
 
-                        {{ session('user_name', 'Admin') }}
+                            {{ auth()->user()->name }}
 
-                    </a>
+                        </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end">
 
-                        <li>
+                            <li>
+                                <span class="dropdown-item-text">
+                                    <strong>
+                                        {{ auth()->user()->name }}
+                                    </strong>
+                                    <br>
 
-                            <form action="{{ route('logout') }}"
-                                  method="POST">
+                                    <small class="text-muted">
+                                        Role:
+                                        {{ ucfirst(auth()->user()->role->name) }}
+                                    </small>
+                                </span>
+                            </li>
 
-                                @csrf
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
 
-                                <button type="submit"
-                                        class="dropdown-item">
+                            <li>
 
-                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                <form action="{{ route('logout') }}"
+                                      method="POST">
 
-                                    Logout
+                                    @csrf
 
-                                </button>
+                                    <button type="submit"
+                                            class="dropdown-item">
 
-                            </form>
+                                        <i class="bi bi-box-arrow-right me-2"></i>
 
-                        </li>
+                                        Logout
 
-                    </ul>
+                                    </button>
 
-                </li>
+                                </form>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+                @endauth
 
             </ul>
 

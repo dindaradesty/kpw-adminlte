@@ -13,10 +13,6 @@ class PengembalianController extends Controller
 {
     public function index()
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $pengembalian = Pengembalian::with([
             'peminjaman.anggota',
             'peminjaman.buku'
@@ -24,7 +20,10 @@ class PengembalianController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        $peminjaman = Peminjaman::with(['anggota', 'buku'])
+        $peminjaman = Peminjaman::with([
+            'anggota',
+            'buku'
+        ])
             ->where('status', 'Dipinjam')
             ->whereDoesntHave('pengembalian')
             ->orderByDesc('id')
@@ -32,23 +31,28 @@ class PengembalianController extends Controller
 
         return view(
             'pengembalian',
-            compact('pengembalian', 'peminjaman')
+            compact(
+                'pengembalian',
+                'peminjaman'
+            )
         );
     }
 
     public function store(StorePengembalianRequest $request)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         DB::transaction(function () use ($request) {
 
-            $pinjam = Peminjaman::where('id', $request->peminjaman_id)
+            $pinjam = Peminjaman::where(
+                'id',
+                $request->peminjaman_id
+            )
                 ->lockForUpdate()
                 ->first();
 
-            if (!$pinjam || $pinjam->status !== 'Dipinjam') {
+            if (
+                !$pinjam ||
+                $pinjam->status !== 'Dipinjam'
+            ) {
                 abort(
                     422,
                     'Peminjaman sudah dikembalikan atau tidak ditemukan.'
@@ -86,15 +90,14 @@ class PengembalianController extends Controller
 
         return redirect()
             ->route('pengembalian.index')
-            ->with('success', 'Pengembalian berhasil diproses.');
+            ->with(
+                'success',
+                'Pengembalian berhasil diproses.'
+            );
     }
 
     public function show(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $pengembalian = Pengembalian::with([
             'peminjaman.anggota',
             'peminjaman.buku'
@@ -117,10 +120,6 @@ class PengembalianController extends Controller
 
     public function edit(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $pengembalian = Pengembalian::find($id);
 
         if (!$pengembalian) {
@@ -142,10 +141,6 @@ class PengembalianController extends Controller
         UpdatePengembalianRequest $request,
         string $id
     ) {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         $pengembalian = Pengembalian::find($id);
 
         if (!$pengembalian) {
@@ -171,13 +166,12 @@ class PengembalianController extends Controller
 
     public function destroy(string $id)
     {
-        if (!session('logged_in')) {
-            return redirect('/login');
-        }
-
         DB::transaction(function () use ($id) {
 
-            $pengembalian = Pengembalian::where('id', $id)
+            $pengembalian = Pengembalian::where(
+                'id',
+                $id
+            )
                 ->lockForUpdate()
                 ->first();
 
